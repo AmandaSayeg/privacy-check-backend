@@ -1,0 +1,9 @@
+{
+  "name": "privacy-check-backend",
+  "version": "1.0.0",
+  "description": "Backend do Privacy Check — hospedado no Vercel",
+  "private": true,
+  "scripts": {
+    "dev": "vercel dev"
+  }
+}

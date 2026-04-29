@@ -127,7 +127,13 @@ export default async function handler(req, res) {
 
   // Build compact prompt for speed
   const buildPrompt = () => {
-    const lines = [`Analyze privacy practices of ${domain}. Be objective and rigorous — do not be lenient with sites known for mass data collection.`];
+    const langInstruction = {
+      pt: 'IMPORTANTE: Responda TODOS os textos (summary, positive_points, negative_points, data_collected, data_usage) em PORTUGUÊS BRASILEIRO.',
+      en: 'IMPORTANT: Write ALL text fields (summary, positive_points, negative_points, data_collected, data_usage) in ENGLISH.',
+      es: 'IMPORTANTE: Escribe TODOS los textos (summary, positive_points, negative_points, data_collected, data_usage) en ESPAÑOL.',
+    }[langCode];
+
+    const lines = [`${langInstruction}\n\nAnalyze privacy practices of ${domain}. Be objective and rigorous — do not be lenient with sites known for mass data collection.`];
 
     lines.push(`\nScore each document 0–10 (0 = missing or terrible, 10 = excellent):`);
 
@@ -163,9 +169,9 @@ export default async function handler(req, res) {
   };
 
   const systemPrompt = {
-    pt: 'Você é um especialista rigoroso em privacidade digital. Seja objetivo e preciso. Sites como Facebook, TikTok e Google devem receber notas baixas por suas práticas extensivas de coleta de dados. Retorne APENAS JSON válido.',
-    en: 'You are a rigorous digital privacy expert. Be objective and accurate. Sites like Facebook, TikTok, and Google should receive low scores for their extensive data collection practices. Return ONLY valid JSON.',
-    es: 'Eres un experto riguroso en privacidad digital. Sé objetivo y preciso. Sitios como Facebook, TikTok y Google deben recibir notas bajas. Devuelve SOLO JSON válido.',
+    pt: 'Você é um especialista rigoroso em privacidade digital. Seja objetivo e preciso. Sites como Facebook, TikTok e Google devem receber notas baixas por suas práticas extensivas de coleta de dados. Responda SEMPRE em português brasileiro. Retorne APENAS JSON válido sem markdown.',
+    en: 'You are a rigorous digital privacy expert. Be objective and accurate. Sites like Facebook, TikTok, and Google should receive low scores for their extensive data collection practices. Always respond in English. Return ONLY valid JSON without markdown.',
+    es: 'Eres un experto riguroso en privacidad digital. Sé objetivo y preciso. Sitios como Facebook, TikTok y Google deben recibir notas bajas. Responde SIEMPRE en español. Devuelve SOLO JSON válido sin markdown.',
   }[langCode];
 
   try {
@@ -219,7 +225,7 @@ export default async function handler(req, res) {
 
     result.negative_points = result.negative_points || [];
     for (const [key, msg] of Object.entries(missingMsg)) {
-      if (!found[key] && !result.negative_points.some(p => p.startsWith('❌') && p.includes(key))) {
+      if (!found[key] && !result.negative_points.some(p => p.startsWith('❌'))) {
         result.negative_points.unshift(msg);
       }
     }

@@ -184,7 +184,7 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001', // Haiku: 3-4x mais rápido que Opus
-        max_tokens: 800,
+        max_tokens: 1500,
         temperature: 0,
         system: systemPrompt,
         messages: [{ role: 'user', content: buildPrompt() }],
